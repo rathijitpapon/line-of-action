@@ -8,6 +8,15 @@ class LOA{
         this.calculateTable();
     }
 
+    setData(boardSize, whiteState, blackState) {
+        this.boardSize = boardSize;
+        this.whiteState = whiteState;
+        this.blackState = blackState;
+        this.checkerTable = {};
+        this.checkerTablePosition = [];
+        this.calculateTable();
+    }
+
     calculateMoves(index) {
         let moves = [];
         const rowMove = this.checkerTable.row[this.checkerTablePosition[index].row];

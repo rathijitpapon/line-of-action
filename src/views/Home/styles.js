@@ -80,6 +80,23 @@ const style = makeStyles((theme) => ({
     },
   },
 
+  playButtonContainer: {
+    height: "40px",
+    width: "100%",
+    borderRadius: "20px",
+    backgroundColor: "#c19999",
+    textAlign: "center",
+    cursor: "pointer",
+    color: "#302393",
+    fontSize: "25px",
+    fontWeight: "bold",
+    paddingTop: "10px",
+
+    "&:hover": {
+      opacity: "0.5",
+    },
+  },
+
   textContainer: {
     marginTop: "20px",
     textAlign: "center",

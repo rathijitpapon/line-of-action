@@ -2,11 +2,12 @@ import React, {useState, useEffect} from 'react';
 import { toast } from 'react-toastify';
 
 import LOA from "../../gameLogics/LOA";
+import AI from "../../gameLogics/AI";
 
 import style from "./styles";
 
 const Home = () => {
-    const {mainContainer, titleContainer, gameBoardContainer, gameBoxContainer, blackCheckerContainer, whiteCheckerContainer, optionContainer, buttonContainer, textContainer, moveContainer} = style();
+    const {mainContainer, titleContainer, gameBoardContainer, gameBoxContainer, blackCheckerContainer, whiteCheckerContainer, optionContainer, buttonContainer, playButtonContainer, textContainer, moveContainer} = style();
 
     const [boardSize, setBoardSize] = useState(6);
     const [optionWidth, setOptionWidth] = useState("240px");
@@ -17,6 +18,10 @@ const Home = () => {
     const [blackState, setBlackState] = useState([1, 2, 3, 4, 31, 32, 33, 34 ]);
 
     const [gridTemplate, setGridTemplate] = useState("40px 40px 40px 40px 40px 40px");
+
+    const [playingMode, setPlayingMode] = useState(false);
+    const [playingModeMsg, setPlayingModeMsg] = useState("Play With AI");
+    const [modeMsg, setModeMsg] = useState("You are playing with Human");
 
     const [game, setGame] = useState(new LOA(boardSize, whiteState, blackState));
     const [selectedChecker, setSelectedChecker] = useState(null);
@@ -82,8 +87,58 @@ const Home = () => {
         });
     };
 
+    const onPlayClick = () => {
+        if(boardSize === 6) {
+            setWhiteState([6, 12, 18, 24, 11, 17, 23, 29 ]);
+            setBlackState([1, 2, 3, 4, 31, 32, 33, 34 ]);
+            setGame(new LOA(6, [6, 12, 18, 24, 11, 17, 23, 29 ], [1, 2, 3, 4, 31, 32, 33, 34 ]));
+        }
+        else if(boardSize === 8) {
+            setWhiteState([8, 16, 24, 32, 40, 48, 15, 23, 31, 39, 47, 55 ]);
+            setBlackState([1, 2, 3, 4, 5, 6, 57, 58, 59, 60, 61, 62 ]);
+            setGame(new LOA(8, [8, 16, 24, 32, 40, 48, 15, 23, 31, 39, 47, 55 ], [1, 2, 3, 4, 5, 6, 57, 58, 59, 60, 61, 62 ]));
+        }
+
+        if(playingMode){
+            setPlayingMode(false);
+            setPlayingModeMsg("Play With AI");
+            setModeMsg("You are playing with Human");
+        }
+        else {
+            setPlayingMode(true);
+            setPlayingModeMsg("Play With Human");
+            setModeMsg("You are playing with AI");
+        }
+        setGameTurn(false);
+        setTurnMsg("Now Black's Turn");
+        setMoveIcon({
+            up: false,
+            down: false,
+            left: false,
+            right: false,
+            mainDiagonalUp: false,
+            mainDiagonalDown: false,
+            secondDiagonalUp: false,
+            secondDiagonalDown: false,
+        });
+    }
+
     const onCellClick = (index) => {
         setSelectedChecker(index);
+
+        if(whiteState.includes(index) && playingMode) {
+            setMoveIcon({
+                up: false,
+                down: false,
+                left: false,
+                right: false,
+                mainDiagonalUp: false,
+                mainDiagonalDown: false,
+                secondDiagonalUp: false,
+                secondDiagonalDown: false,
+            });
+            return;
+        }
 
         if((!gameTurn && blackState.includes(index)) || (gameTurn && whiteState.includes(index))){
             const moves = game.calculateMoves(index);
@@ -125,6 +180,7 @@ const Home = () => {
         else {
             setTurnMsg("Now White's Turn");
         }
+
         setGameTurn(!gameTurn);
         setWhiteState(newStates.whiteState);
         setBlackState(newStates.blackState);
@@ -140,9 +196,9 @@ const Home = () => {
         });
 
         if(newStates.msg1){
-            toast.success(newStates.msg1,  {
+            toast.info(newStates.msg1,  {
                 position: "top-right",
-                autoClose: 3000,
+                autoClose: 2000,
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -151,15 +207,51 @@ const Home = () => {
             });
         }
         if(newStates.msg2){
-            toast.success(newStates.msg2,  {
+            toast.info(newStates.msg2,  {
                 position: "top-right",
-                autoClose: 3000,
+                autoClose: 2000,
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
                 draggable: true,
                 progress: undefined,
             });
+        }
+
+        if(playingMode) {
+            setTimeout(() => {
+            const aiGame = new AI(boardSize, newStates.whiteState, newStates.blackState);
+            const move = aiGame.generateAIMove(6);
+            let newAIStates = game.doMove(move.state, move.move, move.selectedChecker);
+
+            setTurnMsg("Now Black's Turn");
+            setGameTurn(false);
+            setWhiteState(newAIStates.whiteState);
+            setBlackState(newAIStates.blackState);
+
+            if(newAIStates.msg1){
+                toast.info(newAIStates.msg1,  {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
+            }
+            if(newAIStates.msg2){
+                toast.info(newAIStates.msg2,  {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
+            }
+        }, 100);
         }
     };
 
@@ -171,7 +263,7 @@ const Home = () => {
         function checkEndGame() {
             if(gameTurn && endGame.black) {
                 toast.success("Black Won The Game!",  {
-                    position: "top-right",
+                    position: "top-center",
                     autoClose: 3000,
                     hideProgressBar: false,
                     closeOnClick: true,
@@ -183,7 +275,7 @@ const Home = () => {
             }
             else if(!gameTurn && endGame.white) {
                 toast.success("White Won The Game!",  {
-                    position: "top-right",
+                    position: "top-center",
                     autoClose: 3000,
                     hideProgressBar: false,
                     closeOnClick: true,
@@ -195,7 +287,7 @@ const Home = () => {
             }
             else if(gameTurn && endGame.white) {
                 toast.success("White Won The Game!",  {
-                    position: "top-right",
+                    position: "top-center",
                     autoClose: 3000,
                     hideProgressBar: false,
                     closeOnClick: true,
@@ -207,7 +299,7 @@ const Home = () => {
             }
             else if(!gameTurn && endGame.black) {
                 toast.success("Black Won The Game!",  {
-                    position: "top-right",
+                    position: "top-center",
                     autoClose: 3000,
                     hideProgressBar: false,
                     closeOnClick: true,
@@ -219,7 +311,7 @@ const Home = () => {
             }
             else if(!gameTurn && !endGame.blackMovable) {
                 toast.success("White Won The Game!",  {
-                    position: "top-right",
+                    position: "top-center",
                     autoClose: 3000,
                     hideProgressBar: false,
                     closeOnClick: true,
@@ -231,7 +323,7 @@ const Home = () => {
             }
             else if(gameTurn && !endGame.whiteMovable) {
                 toast.success("Black Won The Game!",  {
-                    position: "top-right",
+                    position: "top-center",
                     autoClose: 3000,
                     hideProgressBar: false,
                     closeOnClick: true,
@@ -310,6 +402,12 @@ const Home = () => {
                         <div className={buttonContainer} onClick={onSixClick} style={{opacity: sixOpacity}}>6 * 6</div>
                         <div className={buttonContainer} onClick={onEightClick} style={{opacity: eightOpacity}}>8 * 8</div>
                     </div>
+
+                    <div className={optionContainer} >
+                        <div className={playButtonContainer} onClick={onPlayClick}>{playingModeMsg}</div>
+                    </div>
+
+                    <div className={textContainer}>{modeMsg}</div>
 
                     <div className={textContainer}>{turnMsg}</div>
 
