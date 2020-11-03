@@ -221,7 +221,13 @@ const Home = () => {
         if(playingMode) {
             setTimeout(() => {
             const aiGame = new AI(boardSize, newStates.whiteState, newStates.blackState);
-            const move = aiGame.generateAIMove(6);
+            let move = null;
+            if(boardSize === 6){
+                move = aiGame.generateAIMove(6);
+            }
+            else if(boardSize === 8) {
+                move = aiGame.generateAIMove(4);
+            }
             let newAIStates = game.doMove(move.state, move.move, move.selectedChecker);
 
             setTurnMsg("Now Black's Turn");
