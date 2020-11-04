@@ -221,43 +221,52 @@ const Home = () => {
         if(playingMode) {
             setTimeout(() => {
             const aiGame = new AI(boardSize, newStates.whiteState, newStates.blackState);
-            let move = null;
-            if(boardSize === 6){
-                move = aiGame.generateAIMove(6);
-            }
-            else if(boardSize === 8) {
-                move = aiGame.generateAIMove(4);
-            }
-            let newAIStates = game.doMove(move.state, move.move, move.selectedChecker);
+            let endGame = game.findEndGame();
+            let isEnd = false;
 
-            setTurnMsg("Now Black's Turn");
-            setGameTurn(false);
-            setWhiteState(newAIStates.whiteState);
-            setBlackState(newAIStates.blackState);
+            if(endGame.black || endGame.white || !endGame.whiteMovable) {
+                isEnd = true;
+            }
 
-            if(newAIStates.msg1){
-                toast.info(newAIStates.msg1,  {
-                    position: "top-right",
-                    autoClose: 2000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                });
+            if(!isEnd) {
+                let move = null;
+                if(boardSize === 6){
+                    move = aiGame.generateAIMove(4);
+                }
+                else if(boardSize === 8) {
+                    move = aiGame.generateAIMove(4);
+                }
+                let newAIStates = game.doMove(move.state, move.move, move.selectedChecker);
+
+                setTurnMsg("Now Black's Turn");
+                setGameTurn(false);
+                setWhiteState(newAIStates.whiteState);
+                setBlackState(newAIStates.blackState);
+
+                if(newAIStates.msg1){
+                    toast.info(newAIStates.msg1,  {
+                        position: "top-right",
+                        autoClose: 2000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                    });
+                }
+                if(newAIStates.msg2){
+                    toast.info(newAIStates.msg2,  {
+                        position: "top-right",
+                        autoClose: 2000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                    });
+                }
             }
-            if(newAIStates.msg2){
-                toast.info(newAIStates.msg2,  {
-                    position: "top-right",
-                    autoClose: 2000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                });
-            }
-        }, 100);
+        }, 500);
         }
     };
 
