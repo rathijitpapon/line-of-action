@@ -8,6 +8,28 @@ class AI{
         this.whiteState = [...whiteState];
         this.blackState = [...blackState];
         this.game = new LOA(boardSize, [...whiteState], [...blackState]);
+        this.pieceSquareTable = [
+            -80, -25, -20, -20, -20, -20, -25, -80,
+            -25, 10, 10, 10, 10, 10, 10, -25,
+            -20, 10, 25, 25, 25, 25, 10, -20,
+            -20, 10, 25, 50, 50, 25, 10, -20,
+            -20, 10, 25, 50, 50, 25, 10, -20,
+            -20, 10, 25, 25, 25, 25, 10, -20,
+            -25, 10, 10, 10, 10, 10, 10, -25,
+            -80, -25, -20, -20, -20, -20, -25, -80
+        ];
+        if(this.boardSize === 6) {
+            this.pieceSquareTable = [
+                -80, -20, -20, -20, -20, -80,
+                -25, 10, 10, 10, 10, -25,
+                -20, 25, 25, 25, 25, -20,
+                -20, 25, 50, 50, 25, -20,
+                -20, 25, 50, 50, 25, -20,
+                -20, 25, 25, 25, 25, -20,
+                -25, 10, 10, 10, 10, -25,
+                -80, -20, -20, -20, -20, -80
+            ];
+        }
     }
 
     generateAIMove(depth) {
@@ -206,6 +228,34 @@ class AI{
         });
 
         evaluationValue += (whiteQuad - blackQuad) * 20;
+
+        let whiteMoveCount = 0;
+        let blackMoveCount = 0;
+
+        game.whiteState.forEach((v, i) => {
+            const moves = game.calculateMoves(v);
+            whiteMoveCount += moves.length;
+        });
+
+        game.blackState.forEach((v, i) => {
+            const moves = game.calculateMoves(v);
+            blackMoveCount += moves.length;
+        });
+
+        evaluationValue += (whiteMoveCount - blackMoveCount) * 30;
+
+        let whitePieceSum = 0;
+        let blackPieceSum = 0;
+
+        game.whiteState.forEach((v, i) => {
+            whitePieceSum += this.pieceSquareTable[v];
+        });
+
+        game.blackState.forEach((v, i) => {
+            blackPieceSum += this.pieceSquareTable[v];
+        });
+
+        evaluationValue += whitePieceSum - blackPieceSum;
 
        return evaluationValue;
     }
