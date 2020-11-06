@@ -1,6 +1,6 @@
 # Line Of Action
 
-## Game URL: 
+### Game URL: 
 
 You can play the game here: [Line Of Action](https://lineofaction.herokuapp.com/)
 
