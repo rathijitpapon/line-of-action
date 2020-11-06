@@ -26,6 +26,7 @@ const Home = () => {
     const [game, setGame] = useState(new LOA(boardSize, whiteState, blackState));
     const [selectedChecker, setSelectedChecker] = useState(null);
     const [moves, setMoves] = useState([]);
+    const [destination, setDestination] = useState([]);
     const [gameTurn, setGameTurn] = useState(false);
     const [turnMsg, setTurnMsg] = useState("Now Black's Turn");
     const [moveIcon, setMoveIcon] = useState({
@@ -51,6 +52,7 @@ const Home = () => {
 
         setGameTurn(false);
         setTurnMsg("Now Black's Turn");
+        setDestination([]);
         setMoveIcon({
             up: false,
             down: false,
@@ -75,6 +77,7 @@ const Home = () => {
 
         setGameTurn(false);
         setTurnMsg("Now Black's Turn");
+        setDestination([]);
         setMoveIcon({
             up: false,
             down: false,
@@ -111,6 +114,7 @@ const Home = () => {
         }
         setGameTurn(false);
         setTurnMsg("Now Black's Turn");
+        setDestination([]);
         setMoveIcon({
             up: false,
             down: false,
@@ -127,6 +131,7 @@ const Home = () => {
         setSelectedChecker(index);
 
         if(whiteState.includes(index) && playingMode) {
+            setDestination([]);
             setMoveIcon({
                 up: false,
                 down: false,
@@ -142,17 +147,25 @@ const Home = () => {
 
         if((!gameTurn && blackState.includes(index)) || (gameTurn && whiteState.includes(index))){
             const moves = game.calculateMoves(index);
+            const moveDestination = [];
             let moveStates = {...moveIcon};
             const keys = Object.keys(moveStates);
             keys.forEach((key, index) => {
                 moveStates[key] = false;
             });
-            moves.map(move => moveStates[move.state] = true)
+            moves.map(move => {
+                moveStates[move.state] = true
+                moveDestination.push(move.destination);
+                return true;
+            });
+
+            setDestination(moveDestination);
 
             setMoves(moves);
             setMoveIcon(moveStates);
         }
         else {
+            setDestination([]);
             setMoveIcon({
                 up: false,
                 down: false,
@@ -184,6 +197,7 @@ const Home = () => {
         setGameTurn(!gameTurn);
         setWhiteState(newStates.whiteState);
         setBlackState(newStates.blackState);
+        setDestination([]);
         setMoveIcon({
             up: false,
             down: false,
@@ -364,6 +378,7 @@ const Home = () => {
     
                     setGameTurn(false);
                     setTurnMsg("Now Black's Turn");
+                    setDestination([]);
                     setMoveIcon({
                         up: false,
                         down: false,
@@ -395,7 +410,7 @@ const Home = () => {
                     <React.Fragment key={i}>
                         {[...Array(boardSize)].map((y, j) => (
 
-                            <div className={gameBoxContainer} key={i*boardSize+j} onClick={() => onCellClick(i*boardSize+j)}>
+                            <div style={destination.includes(i*boardSize+j) ? {opacity: 0.3} : {opacity: 1}} className={gameBoxContainer} key={i*boardSize+j} onClick={() => onCellClick(i*boardSize+j)}>
 
                                 {whiteState.includes(i*boardSize+j) ? (
                                     <div className={whiteCheckerContainer}></div>

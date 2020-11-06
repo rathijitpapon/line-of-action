@@ -54,6 +54,7 @@ class LOA{
                 moves.push({
                     state: "right",
                     move: rowMove,
+                    destination: i,
                 });
             }
         }
@@ -73,6 +74,7 @@ class LOA{
                 moves.push({
                     state: "left",
                     move: rowMove,
+                    destination: i,
                 });
             }
         }
@@ -92,6 +94,7 @@ class LOA{
                 moves.push({
                     state: "down",
                     move: colMove,
+                    destination: i,
                 });
             }
         }
@@ -111,6 +114,7 @@ class LOA{
                 moves.push({
                     state: "up",
                     move: colMove,
+                    destination: i,
                 });
             }
         }
@@ -130,6 +134,7 @@ class LOA{
                 moves.push({
                     state: "mainDiagonalDown",
                     move: mainDMove,
+                    destination: i,
                 });
             }
         }
@@ -149,6 +154,7 @@ class LOA{
                 moves.push({
                     state: "mainDiagonalUp",
                     move: mainDMove,
+                    destination: i,
                 });
             }
         }
@@ -168,6 +174,7 @@ class LOA{
                 moves.push({
                     state: "secondDiagonalDown",
                     move: secondDMove,
+                    destination: i,
                 });
             }
         }
@@ -187,6 +194,7 @@ class LOA{
                 moves.push({
                     state: "secondDiagonalUp",
                     move: secondDMove,
+                    destination: i,
                 });
             }
         }
