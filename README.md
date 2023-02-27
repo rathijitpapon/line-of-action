@@ -2,7 +2,7 @@
 
 ### Game URL: 
 
-You can play the game here: [Line Of Action](https://lineofaction.herokuapp.com/)
+You can play the game here: [Line Of Action](https://lineofaction.vercel.app/)
 
 Lines of Action is a board game, of the same general type as Chess, Go, or Othello. LOA was invented by Claude Soucie, and described in A Gamut of Games by Sid Sackson.
 
